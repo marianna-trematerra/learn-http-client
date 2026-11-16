@@ -139,7 +139,7 @@ A "domain name" or "hostname" is just one portion of a URL.
 
 Example: https://homestarrunner.com/toons has a hostname of homestarrunner.com.
 
-The`https://` and `/toons` portions aren't part of the domain name --> IP address mapping that we've been talking about.
+The `https://` and `/toons` portions aren't part of the domain name --> IP address mapping that we've been talking about.
 
 **Parsing a URL in Python**
 
@@ -180,6 +180,102 @@ From there, the resolver works its way down from one of ICANN's "root nameserver
 A subdomain prefixes a domain name, allowing a domain to route network traffic to many different servers and resources.
 
 For example, docs.github.com is a subdomain of github.com. The docs subdomain likely routes to a different server than the main github.com domain.
+
+
+## 3. URIs
+
+### L1 Uniform Resourse Identifiers
+
+> **URI (Uniform Resource Ientifier)**: unique character sequence that identifies a resource that is (almost always) accessed via the internet.
+
+URIs come in two main types:
+* URLs
+* URNs
+
+### L3 Further Dissecting a URL
+
+There are 8 main parts to a URL, though not all the sections are always present.
+Each piece plays a role in helping clients locate the resources they're looking for.
+
+| **Part**    |Required    | Example    |
+|--------|---------|---------|
+| **Protocol**    |Yes    | http    |  
+| **Username**    |No    | waynelagner    |
+| **Password**    |No    | pwn3d    |
+| **Domain**    |Yes  | jello.app    |
+| **Port**    |No (defaults to 80 or 443)   | 8080    |
+| **Path**    |No (default to / )    | /boards    |
+| **Query**    |No    | sort=createdAt    |
+| **Fragment**    |No    | #id    |
+
+
+4T The pproProtocol
+### L3 Further Dissecting a URL
+The "protocol" (also referred to as the "scheme") is the first component of a URL. It defines the rules by which the data being communicated is displayed, encoded or formatted.
+
+Some examples of different URL protocols:
+* http
+* ftp
+mailto
+* https
+
+
+**Not All Schemes Require a "//"**
+
+The "http" in a URL is always followed by ://. All URLs have the colon, but the // part is only included for schemes that have an authority component.
+
+### L5 URL Ports
+
+The port in a URL is a virtual point where network connections are made.
+
+Ports are managed by a computer's operating system and are numbered from 0 to 65,535 (Though port 0 is reserved for the system API).
+
+Whenever you connect to another computer over a network, you're connecting to a specific port on that computer, which is listened to by a program on that computer. A port can only be used by one program at a time, which is why there are so many possible ports.
+
+The port component of a URL is often not visible when browsing normal sites on the internet, because 99% of the time you're using the default ports for the HTTP and HTTPS schemes: 80 and 443 respectively.
+
+Whenever you aren't using a default port, you need to specify it in the URL. For example, port 8080 is often used by web developers when they're running their server in "test mode" on their own machines.
+
+### L6 URL Paths
+
+On static sites (like blogs or documentation sites) a URL's path mirrors the server's filesystem hierarchy.
+
+For example, if the website https://exampleblog.com had a static web server running in its /home directory, then a request to https://exampleblog.com/site/index.html would probably return the file located at /home/site/index.html.
+
+But technically, this is just a convention. The server could be configured to return any file or data given that path.
+
+**It's Not Always That Simple**
+
+Paths in URLs are essentially just another type of parameter that can be passed to the server when making a request. For dynamic sites and web applications, the path is often used to denote a specific resource or endpoint.
+
+### L7 Query Parameters
+
+Query parameters in a URL are not always present. In the context of websites, query parameters are often used for marketing analytics or for changing a variable on the web page. With website URLs, query parameters rarely change which page you're viewing, though they often will change the page's contents.
+
+That said, query parameters can be used for anything the server chooses to use them for, just like the URL's path.
+
+## 4. Async
+
+### L1 Synchronous vs. Asynchronous
+
+Most of the Python you've written so far is synchronous – each line runs only after the one above finishes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
