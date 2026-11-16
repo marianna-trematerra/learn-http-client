@@ -209,7 +209,6 @@ Each piece plays a role in helping clients locate the resources they're looking 
 | **Fragment**    |No    | #id    |
 
 
-4T The pproProtocol
 ### L3 Further Dissecting a URL
 The "protocol" (also referred to as the "scheme") is the first component of a URL. It defines the rules by which the data being communicated is displayed, encoded or formatted.
 
@@ -218,7 +217,6 @@ Some examples of different URL protocols:
 * ftp
 mailto
 * https
-
 
 **Not All Schemes Require a "//"**
 
@@ -261,24 +259,119 @@ That said, query parameters can be used for anything the server chooses to use t
 Most of the Python you've written so far is synchronous – each line runs only after the one above finishes.
 
 
+  ```python
+print("I print first")
+print("I print second")
+print("I print third")
+  ```
+
+In **asynchronous (async)** code, long-running operations can pause one task while the program keeps doing something else. Python ships the `asyncio` library for this:
+
+  ```python
+import asyncio
+
+
+async def delay_print(ms: int, text: str) -> None:
+    await asyncio.sleep(ms / 1_000)
+    print(text)
+
+
+async def main() -> None:
+    print("I print first")
+    asyncio.create_task(delay_print(100, "I print third after 100 ms"))
+    print("I print second")
+    await asyncio.sleep(0.2)  # keep the loop alive briefly
+
+
+await main()  # Pyodide already has a running event loop
+# asyncio.run(main()) - how you'd normally do it
+  ```
+
+
+### L2 Why Do We Want Async Code?
+
+We try to keep most of our code synchronous because it's easier to understand, and therefore often has fewer bugs. However, sometimes we need our code to be asynchronous.
+
+**Example:**  
+Whenever you update your user settings on a website, your browser will need to communicate those new settings to the server. The time it takes your HTTP request to physically travel across all the wiring of the internet is usually around 100 milliseconds. 
+
+By making network requests asynchronously, we let the webpage execute other code while waiting for the HTTP response to come back. This keeps the user experience snappy and user-friendly.
+
+As a general rule, we should only use async code when we need to for performance reasons. Synchronous code is simpler.
+
+### L3 Coroutines & the Event Loop
+
+Python's solution to async is the **coroutine**.
+ 
+A coroutine function (declared with `async def`) doesn't run when you call it – it hands you a coroutine object, a task the event loop can schedule later.
+While one coroutine is paused (e.g. waiting for I/O, a timer), the loop can give CPU time to something else, so your program never has to freeze.
+
+**Declaring a Coroutine**
+
+Calling dice_roll() returns a coroutine object immediately.
+
+  ```python
+import asyncio
+import random
+
+async def dice_roll() -> str:
+    await asyncio.sleep(1)  # pretend we're waiting on I/O
+    if random.random() < 0.5:
+        return "success!"
+    raise Exception("failure!")
+  ```
+
+**Awaiting a Coroutine**
+
+await pauses main() and hands control back to the event loop until dice_roll() completes.
+
+  ```python
+async def main() -> None:
+    try:
+        msg = await dice_roll()  # the event loop runs dice_roll() here
+        print(msg)
+    except Exception as err:
+        print(f"oops: {err}")
+  ```
+
+
+### L4 Why Are Coroutines Useful?
+
+Coroutines are Python's answer to slow I/O. When a coroutine hits a wait – network, disk, database – the event loop can switch to something else, so the rest of your code keeps running.
+
+
+### L5 Using Coroutines
+
+`await` pauses the current coroutine until the awaited coroutine (or other awaitable) finishes and returns a value. It lets Python switch to other work instead of blocking.
+
+**When to Use Await**
+
+You can only use the await keyword:
+* Inside an async def
+*  function.
+* At top‑level in Pyodide
+
+
+### L6 Creating Coroutines
+
+While the await keyword is used to wait for a coroutine to complete, the async keyword is used to create a coroutine function. When we call an async function, it returns a coroutine object that can later be awaited.
+
+  ```python
+async def get_issue_data(issue_id: str) -> dict[str, str]:
+    resp = await pyfetch(f"/api/issues/{issue_id}")
+    return await resp.json()
+
+
+result = await coroutine  # now the coroutine runs and yields the data
+  ```
 
 
 
+1. async def always returns a coroutine object, even if there's no await inside.
 
+2. The await keyword can only be used inside an async function or at top level in Pyodide.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+3. A coroutine doesn't run until you await it or schedule it, e.g. with asyncio.run()
 
 
 
